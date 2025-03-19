@@ -48,14 +48,6 @@
       become: false
       delegate_to: 127.0.0.1
 
-- name: Ensure Traefik environment variables installed
-  ansible.builtin.copy:
-    content: "{{ traefik_environment_variables }}"
-    dest: "{{ traefik_config_dir_path }}/env"
-    owner: "{{ traefik_uid }}"
-    group: "{{ traefik_gid }}"
-    mode: 0640
-
 - name: Ensure Traefik support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"

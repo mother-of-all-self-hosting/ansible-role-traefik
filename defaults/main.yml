@@ -102,18 +102,6 @@ traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers: []
 # traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers:
 #  - "root-dns.netcup.net"
 #  - "second-dns.netcup.net"
-# traefik_environment_variables_additional_variables: |
-#   NETCUP_CUSTOMER_NUMBER=12345
-#   NETCUP_API_KEY=api_key
-#   NETCUP_API_PASSWORD=password
-
-# Additional environment variables to pass to the container.
-#
-# Example:
-# traefik_environment_variables_additional_variables: |
-#   VARIABLE_1=value
-#   VARIABLE_2=value
-traefik_environment_variables_additional_variables: ''
 
 # Controls whether the web entrypoint is enabled
 traefik_config_entrypoint_web_enabled: true
@@ -434,12 +422,15 @@ traefik_provider_configuration_extension: "{{ traefik_provider_configuration_ext
 # You most likely don't need to touch this variable. Instead, see `traefik_provider_configuration_yaml`.
 traefik_provider_configuration: "{{ traefik_provider_configuration_yaml | from_yaml | combine(traefik_provider_configuration_extension, recursive=True) }}"
 
-# traefik_environment_variables holds a string with environment variable to pass to Traefik.
+# traefik_environment_variables contains a multiline string with environment variables to pass to Traefik.
 #
 # Example:
 # traefik_environment_variables: |
 #   TRAEFIK_ACCESSLOG=true
 #   TRAEFIK_API=true
+#   NETCUP_CUSTOMER_NUMBER=12345
+#   NETCUP_API_KEY=api_key
+#   NETCUP_API_PASSWORD=password
 traefik_environment_variables: ''
 
 # traefik_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
