@@ -119,6 +119,7 @@
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
+  changed_when: "'Downloaded newer image' in result.stdout"
 
 - name: Ensure Traefik container network exists via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module' and traefik_container_network != 'host'

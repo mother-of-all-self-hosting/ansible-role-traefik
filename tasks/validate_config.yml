@@ -25,7 +25,7 @@
     - traefik_entrypoint_primary
 
 - name: Fail if required Traefik ACME settings not defined
-  fail:
+  ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item }}`) when enabling ACME SSL certificate resolvers.
   when: "traefik_config_certificatesResolvers_acme_enabled | bool and vars[item] == ''"
@@ -33,7 +33,7 @@
     - traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint
 
 - name: Fail if Traefik docker endpoint syntax invalid
-  fail:
+  ansible.builtin.fail:
     msg: >-
       traefik_config_providers_docker_endpoint must look like `unix:///var/run/docker.sock` or `tcp://host:2345`
   when: "not (traefik_config_providers_docker_endpoint.startswith('unix://') or traefik_config_providers_docker_endpoint.startswith('tcp://'))"
