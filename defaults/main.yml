@@ -69,6 +69,15 @@ traefik_config_log_level: INFO
 # Controls whether logs for incoming requests are collected
 traefik_config_accessLog_enabled: true
 
+# Controls the access log format (json or common)
+traefik_config_accessLog_format: "common"
+
+# Controls the access log file path
+traefik_config_accessLog_filePath: ""
+
+# Controls the access log buffering size
+traefik_config_accessLog_bufferingSize: 100
+
 # Controls whether Prometheus metrics will be exposed on a new metrics entrypoint.
 # See traefik_config_entrypoint_metrics_enabled
 traefik_config_metrics_prometheus_enabled: false

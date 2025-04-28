@@ -12,7 +12,12 @@ log:
   level: {{ traefik_config_log_level | to_json }}
 
 {% if traefik_config_accessLog_enabled %}
-accessLog: {}
+accessLog:
+  format: {{ traefik_config_accessLog_format | to_json }}
+  {% if traefik_config_accessLog_filePath %}
+  filePath: {{ traefik_config_accessLog_filePath | to_json }}
+  {% endif %}
+  bufferingSize: {{ traefik_config_accessLog_bufferingSize | to_json }}
 {% endif %}
 
 api:
