@@ -7,7 +7,7 @@ traefik_enabled: true
 traefik_identifier: traefik
 
 # renovate: datasource=docker depName=library/traefik versioning=semver
-traefik_version: v3.4.0
+traefik_version: v3.4.1
 
 traefik_uid: ''
 traefik_gid: ''
