@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Traefik systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_identifier }}.service"
   register: traefik_service_stat
 
-- when: traefik_service_stat.stat.exists | bool
+- name: Uninstall Traefik systemd services and files
+  when: traefik_service_stat.stat.exists | bool
   block:
     - name: Ensure Traefik systemd service is stopped
       ansible.builtin.systemd:
@@ -17,12 +17,12 @@
         state: stopped
         daemon_reload: true
 
-    - name: Ensure Traefik systemd service doesn't exist
+    - name: Ensure Traefik systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_identifier }}.service"
         state: absent
 
-    - name: Remove Traefik directory is removed
+    - name: Remove Traefik path does not exist
       ansible.builtin.file:
         path: "{{ traefik_base_path }}"
         state: absent

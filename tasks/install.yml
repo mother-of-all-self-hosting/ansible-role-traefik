@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure Traefik paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -24,7 +23,8 @@
     - path: "{{ traefik_plugins_dir_path }}"
       when: "{{ traefik_plugin_support_enabled }}"
 
-- when: traefik_dashboard_basicauth_enabled | bool
+- name: Run if HTTP Basic authentication is enabled
+  when: traefik_dashboard_basicauth_enabled | bool
   block:
     # We do this locally, so that we won't need passlib to be installed on the server.
     - name: Generate basic auth file locally
@@ -32,7 +32,7 @@
         path: "{{ traefik_dashboard_basicauth_file_tmp }}"
         name: "{{ traefik_dashboard_basicauth_user }}"
         password: "{{ traefik_dashboard_basicauth_password }}"
-        mode: 0640
+        mode: "0640"
       become: false
       delegate_to: 127.0.0.1
 
@@ -60,7 +60,7 @@
     dest: "{{ traefik_config_dir_path }}/{{ item }}"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: 0640
+    mode: "0640"
   with_items:
     - env
     - labels
@@ -71,7 +71,7 @@
     dest: "{{ traefik_config_dir_path }}/traefik.yml"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: 0640
+    mode: "0640"
 
 - name: Ensure provider.yml installed
   ansible.builtin.copy:
@@ -79,8 +79,7 @@
     dest: "{{ traefik_config_dir_path }}/provider.yml"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: 0640
-
+    mode: "0640"
 
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
 # which means that the acme.json file is also created as root. For such a privilege container, this root-owned file is OK.
@@ -92,7 +91,8 @@
 # > The ACME resolve is skipped from the resolvers list error="unable to get ACME account: permissions 777 for /ssl/acme.json are too open, please use 600" resolver=default
 #
 # File ownership/permissions may become incorrect for other reasons too, so this is here to ensure we correct it if it happens.
-- when: traefik_ssl_dir_enabled | bool
+- name: Run if the SSL directory is enabled for Traefik
+  when: traefik_ssl_dir_enabled | bool
   block:
     - name: Check existence of acme.json file
       ansible.builtin.stat:
@@ -111,7 +111,7 @@
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
   community.docker.docker_image:
     name: "{{ traefik_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"  # noqa args
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}" # noqa args
   register: result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
@@ -151,4 +151,4 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/traefik.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_identifier }}.service"
-    mode: 0644
+    mode: "0644"

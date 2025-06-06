@@ -217,7 +217,7 @@ traefik_config_providers_docker_endpoint: unix:///var/run/docker.sock
 traefik_config_api_dashboard: "{{ traefik_dashboard_enabled }}"
 
 # traefik_config_http_middlewares the http.middlewares configuration (see `templates/provider.yml.j2`)
-traefik_config_http_middlewares: "{{ traefik_config_http_middlewares_default | combine (traefik_config_http_middlewares_auto, recursive=True) | combine(traefik_config_http_middlewares_custom, recursive=True) }}"
+traefik_config_http_middlewares: "{{ traefik_config_http_middlewares_default | combine(traefik_config_http_middlewares_auto, recursive=True) | combine(traefik_config_http_middlewares_custom, recursive=True) }}"
 traefik_config_http_middlewares_default: |
   {{
     {}

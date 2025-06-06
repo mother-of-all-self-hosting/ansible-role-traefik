@@ -1,0 +1,8 @@
+---
+profile: production # min, basic, moderate, safety, shared, production
+
+skip_list:
+  - yaml[line-length]
+  - var-naming # specific to the ansible-role-traefik role
+
+offline: true

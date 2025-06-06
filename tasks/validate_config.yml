@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed Traefik settings
   ansible.builtin.fail:
     msg: >-
@@ -11,12 +10,13 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'traefik_ssl_email_address', 'new': 'traefik_config_certificatesResolvers_acme_email'}
-    - {'old': 'traefik_config_letsencrypt_resolver_caServer', 'new': 'traefik_config_certificatesResolvers_acme_caServer'}
-    - {'old': 'traefik_config_letsencrypt_use_staging', 'new': 'traefik_config_certificatesResolvers_acme_use_staging'}
-    - {'old': 'traefik_config_letsencrypt_httpChallenge_entrypoint', 'new': 'traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint'}
-    - {'old': 'traefik_config_certificatesResolvers_acme_email', 'new': '<removed as no longer necessary - see https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/4014>'}
-    - {'old': 'traefik_environment_variables_additional_variables', 'new': 'traefik_environment_variables'}
+    - { "old": "traefik_ssl_email_address", "new": "traefik_config_certificatesResolvers_acme_email" }
+    - { "old": "traefik_config_letsencrypt_resolver_caServer", "new": "traefik_config_certificatesResolvers_acme_caServer" }
+    - { "old": "traefik_config_letsencrypt_use_staging", "new": "traefik_config_certificatesResolvers_acme_use_staging" }
+    - { "old": "traefik_config_letsencrypt_httpChallenge_entrypoint", "new": "traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint" }
+    - "old": "traefik_config_certificatesResolvers_acme_email"
+      "new": "<removed as no longer necessary - see https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/4014>"
+    - { "old": "traefik_environment_variables_additional_variables", "new": "traefik_environment_variables" }
 
 - name: Fail if required Traefik settings not defined
   ansible.builtin.fail:

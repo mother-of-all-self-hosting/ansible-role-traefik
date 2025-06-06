@@ -3,22 +3,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- tags:
+- name: Perform Traefik installation tasks
+  when: traefik_enabled | bool
+  tags:
     - setup-all
     - setup-traefik
     - install-all
     - install-traefik
   block:
-    - when: traefik_enabled | bool
+    - name: Validate Traefik configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: traefik_enabled | bool
+    - name: Install Traefik
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- tags:
+- name: Perform Traefik uninstallation tasks
+  when: not traefik_enabled | bool
+  tags:
     - setup-all
     - setup-traefik
   block:
-    - when: not traefik_enabled | bool
+    - name: Uninstall Traefik
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
