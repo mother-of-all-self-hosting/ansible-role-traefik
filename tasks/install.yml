@@ -27,7 +27,7 @@
   when: traefik_dashboard_basicauth_enabled | bool
   block:
     # We do this locally, so that we won't need passlib to be installed on the server.
-    - name: Generate basic auth file locally
+    - name: Generate HTTP Basic authentication file locally
       community.general.htpasswd:
         path: "{{ traefik_dashboard_basicauth_file_tmp }}"
         name: "{{ traefik_dashboard_basicauth_user }}"
@@ -36,18 +36,18 @@
       become: false
       delegate_to: 127.0.0.1
 
-    - name: Load basic auth file contents
+    - name: Load HTTP Basic authentication file contents
       ansible.builtin.slurp:
         src: "{{ traefik_dashboard_basicauth_file_tmp }}"
       become: false
       delegate_to: 127.0.0.1
       register: traefik_dashboard_basicauth_file_contents_raw
 
-    - name: Load basic auth file contents
+    - name: Load HTTP Basic authentication file contents
       ansible.builtin.set_fact:
         traefik_dashboard_basicauth_file_contents: "{{ traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode | trim }}"
 
-    - name: Ensure local temporary basic auth file is removed
+    - name: Ensure local temporary HTTP Basic authentication file is removed
       ansible.builtin.file:
         path: "{{ traefik_dashboard_basicauth_file_tmp }}"
         state: absent

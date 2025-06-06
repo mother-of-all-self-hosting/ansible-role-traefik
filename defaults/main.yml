@@ -297,8 +297,8 @@ traefik_dashboard_entrypoints: "{{ traefik_entrypoint_primary }}"  # noqa var-na
 traefik_dashboard_tls: "{{ traefik_dashboard_entrypoints != 'web' }}"
 traefik_dashboard_tls_certResolver: "{{ traefik_certResolver_primary }}"  # noqa var-naming
 
-# traefik_dashboard_basicauth_enabled controls if the dashboard is protected with Basic Auth.
-# When the Dashboard is enabled, we automatically enable Basic Auth.
+# traefik_dashboard_basicauth_enabled controls if the dashboard is protected with HTTP Basic authentication.
+# When the Dashboard is enabled, HTTP Basic authentication is also automatically enabled.
 traefik_dashboard_basicauth_enabled: "{{ traefik_dashboard_enabled }}"
 traefik_dashboard_basicauth_user: ''
 traefik_dashboard_basicauth_password: ''
