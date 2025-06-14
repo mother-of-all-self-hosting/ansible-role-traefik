@@ -99,7 +99,7 @@ entryPoints:
 
 {% for additional_entrypoint in traefik_additional_entrypoints %}
   {% set additional_entrypoint_config = ({
-	  'address': ':' + (additional_entrypoint.port | string),
+    'address': ':' + (additional_entrypoint.port | string),
     }) | combine(additional_entrypoint.config)
   %}
 

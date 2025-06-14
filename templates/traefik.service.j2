@@ -28,55 +28,55 @@ If a non-UNIX-socket endpoint is used, we can drop all capabilities and just run
 - the configuration files are owned by the same uid/gid, so reading them works
 #}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ traefik_identifier }} \
-			--log-driver=none \
-			{% if not traefik_config_providers_docker_endpoint_is_unix_socket %}
-			--user={{ traefik_uid }}:{{ traefik_gid }} \
-			--cap-drop=ALL \
-			{% endif %}
-			--read-only \
-			--network={{ traefik_container_network }} \
-			{% if traefik_container_web_host_bind_port %}
-			-p {{ traefik_container_web_host_bind_port }}:{{ traefik_config_entrypoint_web_port_in_container }} \
-			{% endif %}
-			{% if traefik_container_web_secure_host_bind_port %}
-			-p {{ traefik_container_web_secure_host_bind_port }}:{{ traefik_config_entrypoint_web_secure_port_in_container }} \
-			{% endif %}
-			{% if traefik_container_web_secure_host_bind_port_udp %}
-			-p {{ traefik_container_web_secure_host_bind_port_udp }}:{{ traefik_config_entrypoint_web_secure_port_in_container }}/udp \
-			{% endif %}
-			{% if traefik_container_metrics_host_bind_port %}
-			-p {{ traefik_container_metrics_host_bind_port }}:{{ traefik_config_entrypoint_metrics_port_in_container }} \
-			{% endif %}
-			{% for additional_entrypoint in traefik_additional_entrypoints %}
-			{% if additional_entrypoint.host_bind_port %}
-			-p {{ additional_entrypoint.host_bind_port }}:{{ additional_entrypoint.port }} \
-			{% if additional_entrypoint.host_bind_port_udp | default('') %}
-			-p {{ additional_entrypoint.host_bind_port_udp }}:{{ additional_entrypoint.port }}/udp \
-			{% endif %}
-			{% endif %}
-			{% endfor %}
-			--env-file={{ traefik_config_dir_path }}/env \
-			--label-file={{ traefik_config_dir_path }}/labels \
-			--mount type=bind,src={{ traefik_config_dir_path }},dst=/config,ro \
-			{% if traefik_ssl_dir_enabled %}
-			--mount type=bind,src={{ traefik_ssl_dir_path }},dst=/ssl \
-			{% endif %}
-			{% if traefik_config_providers_docker_endpoint_is_unix_socket %}
-			--mount type=bind,src={{ traefik_config_providers_docker_endpoint | replace('unix://', '') }},dst=/var/run/docker.sock,ro \
-			{% endif %}
-			{% if traefik_plugin_support_enabled %}
-			--mount type=bind,src={{ traefik_plugins_dir_path }},dst=/plugins-storage \
-			{% endif %}
-			{% for volume in traefik_container_additional_volumes %}
-			--mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
-			{% endfor %}
-			{% if traefik_container_extra_arguments | length > 0 %}
-			{{ traefik_container_extra_arguments | join(" ") }} \
-			{% endif %}
-			{{ traefik_container_image }} \
-			--configFile=/config/traefik.yml {{ traefik_process_extra_arguments | join(' ') }}
+      --rm \
+      --name={{ traefik_identifier }} \
+      --log-driver=none \
+      {% if not traefik_config_providers_docker_endpoint_is_unix_socket %}
+      --user={{ traefik_uid }}:{{ traefik_gid }} \
+      --cap-drop=ALL \
+      {% endif %}
+      --read-only \
+      --network={{ traefik_container_network }} \
+      {% if traefik_container_web_host_bind_port %}
+      -p {{ traefik_container_web_host_bind_port }}:{{ traefik_config_entrypoint_web_port_in_container }} \
+      {% endif %}
+      {% if traefik_container_web_secure_host_bind_port %}
+      -p {{ traefik_container_web_secure_host_bind_port }}:{{ traefik_config_entrypoint_web_secure_port_in_container }} \
+      {% endif %}
+      {% if traefik_container_web_secure_host_bind_port_udp %}
+      -p {{ traefik_container_web_secure_host_bind_port_udp }}:{{ traefik_config_entrypoint_web_secure_port_in_container }}/udp \
+      {% endif %}
+      {% if traefik_container_metrics_host_bind_port %}
+      -p {{ traefik_container_metrics_host_bind_port }}:{{ traefik_config_entrypoint_metrics_port_in_container }} \
+      {% endif %}
+      {% for additional_entrypoint in traefik_additional_entrypoints %}
+      {% if additional_entrypoint.host_bind_port %}
+      -p {{ additional_entrypoint.host_bind_port }}:{{ additional_entrypoint.port }} \
+      {% if additional_entrypoint.host_bind_port_udp | default('') %}
+      -p {{ additional_entrypoint.host_bind_port_udp }}:{{ additional_entrypoint.port }}/udp \
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+      --env-file={{ traefik_config_dir_path }}/env \
+      --label-file={{ traefik_config_dir_path }}/labels \
+      --mount type=bind,src={{ traefik_config_dir_path }},dst=/config,ro \
+      {% if traefik_ssl_dir_enabled %}
+      --mount type=bind,src={{ traefik_ssl_dir_path }},dst=/ssl \
+      {% endif %}
+      {% if traefik_config_providers_docker_endpoint_is_unix_socket %}
+      --mount type=bind,src={{ traefik_config_providers_docker_endpoint | replace('unix://', '') }},dst=/var/run/docker.sock,ro \
+      {% endif %}
+      {% if traefik_plugin_support_enabled %}
+      --mount type=bind,src={{ traefik_plugins_dir_path }},dst=/plugins-storage \
+      {% endif %}
+      {% for volume in traefik_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {% if traefik_container_extra_arguments | length > 0 %}
+      {{ traefik_container_extra_arguments | join(" ") }} \
+      {% endif %}
+      {{ traefik_container_image }} \
+      --configFile=/config/traefik.yml {{ traefik_process_extra_arguments | join(' ') }}
 
 {% for network in traefik_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ traefik_identifier }}
