@@ -95,6 +95,9 @@ traefik_config_metrics_prometheus_entrypoint: metrics
 # By default, if the web-secure entrypoint is enabled, we enable Let's Encrypt.
 traefik_config_certificatesResolvers_acme_enabled: "{{ traefik_config_entrypoint_web_secure_enabled }}"
 traefik_config_certificatesResolvers_acme_name: default
+# Optional email address. Let's Encrypt doesn't need and use it anymore,
+# but other ACME providers may require it (see https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/4014#issuecomment-2976933956).
+traefik_config_certificatesResolvers_acme_email: ''
 traefik_config_certificatesResolvers_acme_storage: /ssl/acme.json # in-container path
 # traefik_config_certificatesResolvers_acme_use_staging controls whether the Let's Encrypt staging environment is used or not.
 traefik_config_certificatesResolvers_acme_use_staging: false

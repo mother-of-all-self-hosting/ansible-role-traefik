@@ -111,6 +111,9 @@ certificatesResolvers:
 {% if traefik_config_certificatesResolvers_acme_enabled %}
   {{ traefik_config_certificatesResolvers_acme_name }}:
     acme:
+      {% if traefik_config_certificatesResolvers_acme_email %}
+      email: {{ traefik_config_certificatesResolvers_acme_email | to_json }}
+      {% endif %}
       storage: {{ traefik_config_certificatesResolvers_acme_storage | to_json }}
       caServer: {{ traefik_config_certificatesResolvers_acme_caServer | to_json }}
       {% if traefik_config_certificatesResolvers_acme_httpChallenge_enabled %}
