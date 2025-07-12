@@ -30,14 +30,34 @@ traefik_container_image_registry_prefix_upstream: "{{ traefik_container_image_re
 traefik_container_image_registry_prefix_upstream_default: docker.io/
 traefik_container_image_force_pull: "{{ traefik_container_image.endswith(':latest') }}"
 
+# Specifies how the container publishes its web port
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
+traefik_container_web_host_bind_port: "{{ traefik_config_entrypoint_web_port if traefik_config_entrypoint_web_enabled else '' }}"
+
+# Specifies how the container publishes its TCP web-secure port
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+traefik_container_web_secure_host_bind_port: "{{ traefik_config_entrypoint_web_secure_port if traefik_config_entrypoint_web_secure_enabled else '' }}"
+
+# Specifies how the container publishes its UDP web-secure port
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+traefik_container_web_secure_host_bind_port_udp: "{{ traefik_config_entrypoint_web_secure_http3_config_advertisedPort if traefik_config_entrypoint_web_secure_enabled and traefik_config_entrypoint_web_secure_http3_enabled else '' }}"
+
+# Specifies how the container publishes its metrics port
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
+traefik_container_metrics_host_bind_port: "{{ traefik_config_entrypoint_metrics_port if traefik_config_entrypoint_metrics_enabled else '' }}"
+
+traefik_container_network: traefik
+
 traefik_ssl_dir_enabled: "{{ traefik_config_certificatesResolvers_acme_enabled }}"
 
 # Controls whether traefik_plugins_dir_path is created and mounted
 traefik_plugin_support_enabled: false
 
 traefik_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-
-traefik_container_network: traefik
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
@@ -365,26 +385,6 @@ traefik_additional_domains_to_obtain_certificates_for_entryPoints: "{{ traefik_c
 # Specifies the certitficate resolver to use when obtaining additional certificates.
 # See: traefik_additional_domains_to_obtain_certificates_for
 traefik_additional_domains_to_obtain_certificates_for_certResolver: "{{ traefik_certResolver_primary }}"
-
-# Specifies how the container publishes its web port
-#
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
-traefik_container_web_host_bind_port: "{{ traefik_config_entrypoint_web_port if traefik_config_entrypoint_web_enabled else '' }}"
-
-# Specifies how the container publishes its TCP web-secure port
-#
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
-traefik_container_web_secure_host_bind_port: "{{ traefik_config_entrypoint_web_secure_port if traefik_config_entrypoint_web_secure_enabled else '' }}"
-
-# Specifies how the container publishes its UDP web-secure port
-#
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
-traefik_container_web_secure_host_bind_port_udp: "{{ traefik_config_entrypoint_web_secure_http3_config_advertisedPort if traefik_config_entrypoint_web_secure_enabled and traefik_config_entrypoint_web_secure_http3_enabled else '' }}"
-
-# Specifies how the container publishes its metrics port
-#
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
-traefik_container_metrics_host_bind_port: "{{ traefik_config_entrypoint_metrics_port if traefik_config_entrypoint_metrics_enabled else '' }}"
 
 # Default Traefik configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.
