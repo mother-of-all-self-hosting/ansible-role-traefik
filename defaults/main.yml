@@ -36,6 +36,7 @@ traefik_container_image_registry_prefix: "{{ traefik_container_image_registry_pr
 traefik_container_image_registry_prefix_upstream: "{{ traefik_container_image_registry_prefix_upstream_default }}"
 traefik_container_image_registry_prefix_upstream_default: docker.io/
 traefik_container_image_tag: "{{ traefik_version }}"
+traefik_container_image_force_pull: "{{ traefik_container_image.endswith(':latest') }}"
 
 traefik_container_network: traefik
 
