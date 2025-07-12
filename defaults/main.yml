@@ -52,13 +52,6 @@ traefik_container_metrics_host_bind_port: "{{ traefik_config_entrypoint_metrics_
 
 traefik_container_network: traefik
 
-traefik_ssl_dir_enabled: "{{ traefik_config_certificatesResolvers_acme_enabled }}"
-
-# Controls whether traefik_plugins_dir_path is created and mounted
-traefik_plugin_support_enabled: false
-
-traefik_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 traefik_container_additional_networks: "{{ (traefik_container_additional_networks_auto + traefik_container_additional_networks_custom) | unique }}"
@@ -71,6 +64,13 @@ traefik_container_additional_networks_custom: []
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
 traefik_container_additional_volumes: []
+
+traefik_ssl_dir_enabled: "{{ traefik_config_certificatesResolvers_acme_enabled }}"
+
+# Controls whether traefik_plugins_dir_path is created and mounted
+traefik_plugin_support_enabled: false
+
+traefik_systemd_required_services_list: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 
 # A list of extra arguments to pass to the container
 traefik_container_extra_arguments: "{{ traefik_container_extra_arguments_auto + traefik_container_extra_arguments_custom }}"
