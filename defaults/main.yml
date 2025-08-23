@@ -94,7 +94,10 @@ traefik_systemd_required_services_list_auto: []
 traefik_systemd_required_services_list_custom: []
 
 # List of systemd services that the Traefik systemd service wants
-traefik_systemd_wanted_services_list: []
+traefik_systemd_wanted_services_list: "{{ traefik_systemd_wanted_services_list_default + traefik_systemd_wanted_services_list_auto + traefik_systemd_wanted_services_list_custom }}"
+traefik_systemd_wanted_services_list_default: []
+traefik_systemd_wanted_services_list_auto: []
+traefik_systemd_wanted_services_list_custom: []
 
 traefik_ssl_dir_enabled: "{{ traefik_config_certificatesResolvers_acme_enabled }}"
 
