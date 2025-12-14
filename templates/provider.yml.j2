@@ -28,3 +28,11 @@ http:
         middlewares: traefik-dashboard-auth
         {% endif %}
     {% endif %}
+
+{% if traefik_tcp_serverstransports_proxyprotocol_enabled %}
+tcp:
+  serversTransports:
+    {{ traefik_tcp_serverstransports_name_default }}:
+      proxyProtocol:
+        version: {{ traefik_tcp_serverstransports_proxyprotocol_version | to_json }}
+{% endif %}

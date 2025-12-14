@@ -407,6 +407,17 @@ traefik_additional_domains_to_obtain_certificates_for_entryPoints: "{{ traefik_c
 # See: traefik_additional_domains_to_obtain_certificates_for
 traefik_additional_domains_to_obtain_certificates_for_certResolver: "{{ traefik_certResolver_primary }}"
 
+# Specify the name of default serversTransports configuration
+traefik_tcp_serverstransports_name_default: mytransport
+
+# Control if PROXY Protocol is enabled
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol
+traefik_tcp_serverstransports_proxyprotocol_enabled: true
+
+# Specify the PROXY Protocol version
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol-version
+traefik_tcp_serverstransports_proxyprotocol_version: 1
+
 # Default Traefik configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.
 #
