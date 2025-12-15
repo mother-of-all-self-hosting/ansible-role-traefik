@@ -45,12 +45,25 @@ entryPoints:
         writeTimeout: {{ traefik_config_entrypoint_web_transport_respondingTimeouts_writeTimeout | to_json }}
         idleTimeout: {{ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout | to_json }}
 
-    {% if traefik_config_entrypoint_web_to_web_secure_redirection_enabled %}
+    {% if traefik_config_entrypoint_web_to_web_secure_redirection_enabled or traefik_config_entrypoint_web_http_encodedCharacters_enabled %}
     http:
+      {% if traefik_config_entrypoint_web_to_web_secure_redirection_enabled %}
       redirections:
         entryPoint:
           to: {{ traefik_config_entrypoint_web_to_web_secure_redirection_to | to_json }}
           scheme: {{ traefik_config_entrypoint_web_to_web_secure_redirection_scheme | to_json }}
+      {% endif %}
+
+      {% if traefik_config_entrypoint_web_http_encodedCharacters_enabled %}
+      encodedCharacters:
+        allowEncodedSlash: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSlash | to_json }}
+        allowEncodedHash: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedHash | to_json }}
+        allowEncodedBackSlash: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedBackSlash | to_json }}
+        allowEncodedNullCharacter: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedNullCharacter | to_json }}
+        allowEncodedSemicolon: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSemicolon | to_json }}
+        allowEncodedPercent: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent | to_json }}
+        allowEncodedQuestionMark: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark | to_json }}
+      {% endif %}
     {% endif %}
 {% endif %}
 
@@ -60,6 +73,17 @@ entryPoints:
 
     http:
       middlewares: {{ traefik_config_entrypoint_web_secure_http_middlewares | to_json }}
+
+      {% if traefik_config_entrypoint_web_secure_http_encodedCharacters_enabled %}
+      encodedCharacters:
+        allowEncodedSlash: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSlash | to_json }}
+        allowEncodedHash: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedHash | to_json }}
+        allowEncodedBackSlash: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedBackSlash | to_json }}
+        allowEncodedNullCharacter: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedNullCharacter | to_json }}
+        allowEncodedSemicolon: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolon | to_json }}
+        allowEncodedPercent: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent | to_json }}
+        allowEncodedQuestionMark: {{ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark | to_json }}
+      {% endif %}
 
     {% if traefik_config_entrypoint_web_secure_http3_enabled %}
     http3: {{ traefik_config_entrypoint_web_secure_http3_config | to_json }}
