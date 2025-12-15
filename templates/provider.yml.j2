@@ -28,3 +28,6 @@ http:
         middlewares: traefik-dashboard-auth
         {% endif %}
     {% endif %}
+
+tcp:
+  serversTransports: {{ traefik_config_tcp_servertransports | to_json }}
