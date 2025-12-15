@@ -349,6 +349,37 @@ traefik_dashboard_basicauth_password: ''
 # Temporary file name on the host that runs Ansible
 traefik_dashboard_basicauth_file_tmp: "/tmp/ansible-htpasswd-traefik"
 
+# traefik_config_tcp_servertransports controls the tcp.serversTransports configuration (see `templates/provider.yml.j2`)
+traefik_config_tcp_servertransports: "{{ traefik_config_tcp_servertransports_default | combine(traefik_config_tcp_servertransports_auto, recursive=True) | combine(traefik_config_tcp_servertransports_custom, recursive=True) }}"
+traefik_config_tcp_servertransports_default: |
+  {{
+    {}
+    | combine(
+      (
+        {
+          traefik_config_tcp_servertransports_default_proxyprotocol_name: {
+            'proxyProtocol': {
+              'version': traefik_config_tcp_servertransports_default_proxyprotocol_version,
+            }
+          }
+        } if traefik_config_tcp_servertransports_default_proxyprotocol_enabled else {}
+      )
+    )
+  }}
+traefik_config_tcp_servertransports_auto: {}
+traefik_config_tcp_servertransports_custom: {}
+
+# Specify the name of default serversTransports configuration
+traefik_config_tcp_servertransports_default_proxyprotocol_name: proxy
+
+# Control if PROXY Protocol is enabled
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol
+traefik_config_tcp_servertransports_default_proxyprotocol_enabled: true
+
+# Specify the PROXY Protocol version
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol-version
+traefik_config_tcp_servertransports_default_proxyprotocol_version: 1
+
 # A list of additional entrypoints.
 #
 # Playbooks are meant to inject their defaults into `traefik_additional_entrypoints_auto`.
@@ -406,17 +437,6 @@ traefik_additional_domains_to_obtain_certificates_for_entryPoints: "{{ traefik_c
 # Specifies the certitficate resolver to use when obtaining additional certificates.
 # See: traefik_additional_domains_to_obtain_certificates_for
 traefik_additional_domains_to_obtain_certificates_for_certResolver: "{{ traefik_certResolver_primary }}"
-
-# Specify the name of default serversTransports configuration
-traefik_tcp_serverstransports_name_default: mytransport
-
-# Control if PROXY Protocol is enabled
-# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol
-traefik_tcp_serverstransports_proxyprotocol_enabled: true
-
-# Specify the PROXY Protocol version
-# See: https://doc.traefik.io/traefik/reference/routing-configuration/tcp/serverstransport/#opt-serverstransport-proxyProtocol-version
-traefik_tcp_serverstransports_proxyprotocol_version: 1
 
 # Default Traefik configuration template which covers the generic use case.
 # You can customize it by controlling the various variables inside it.
