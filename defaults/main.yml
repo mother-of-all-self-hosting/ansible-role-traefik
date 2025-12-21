@@ -76,7 +76,7 @@ traefik_container_additional_volumes_custom: []
 #   another.label="here"
 traefik_labels_additional_labels: ''
 
-# A list of extra arguments to pass to the container
+# A list of extra arguments to pass to the container (`docker create` command)
 traefik_container_extra_arguments: "{{ traefik_container_extra_arguments_auto + traefik_container_extra_arguments_custom }}"
 traefik_container_extra_arguments_auto: []
 traefik_container_extra_arguments_custom: []
