@@ -19,8 +19,8 @@ traefik_plugins_dir_path: "{{ traefik_base_path }}/plugins-storage"
 # renovate: datasource=docker depName=library/traefik versioning=semver
 traefik_version: v3.6.5
 
-traefik_uid: ''
-traefik_gid: ''
+traefik_uid: ""
+traefik_gid: ""
 
 traefik_container_image: "{{ traefik_container_image_registry_prefix }}traefik:{{ traefik_container_image_tag }}"
 traefik_container_image_tag: "{{ traefik_version }}"
@@ -74,7 +74,7 @@ traefik_container_additional_volumes_custom: []
 # traefik_labels_additional_labels: |
 #   my.label=1
 #   another.label="here"
-traefik_labels_additional_labels: ''
+traefik_labels_additional_labels: ""
 
 # A list of extra arguments to pass to the container (`docker create` command)
 traefik_container_extra_arguments: "{{ traefik_container_extra_arguments_auto + traefik_container_extra_arguments_custom }}"
@@ -138,7 +138,7 @@ traefik_config_certificatesResolvers_acme_enabled: "{{ traefik_config_entrypoint
 traefik_config_certificatesResolvers_acme_name: default
 # Optional email address. Let's Encrypt doesn't need and use it anymore,
 # but other ACME providers may require it (see https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/4014#issuecomment-2976933956).
-traefik_config_certificatesResolvers_acme_email: ''
+traefik_config_certificatesResolvers_acme_email: ""
 traefik_config_certificatesResolvers_acme_storage: /ssl/acme.json # in-container path
 # traefik_config_certificatesResolvers_acme_use_staging controls whether the Let's Encrypt staging environment is used or not.
 traefik_config_certificatesResolvers_acme_use_staging: false
@@ -157,7 +157,7 @@ traefik_config_certificatesResolvers_acme_dnsChallenge_enabled: false
 # Specify the DNS provider to handle DNS challenges.
 traefik_config_certificatesResolvers_acme_dnsChallenge_provider: ""
 # The delay in seconds before checking DNS propagation for the ACME DNS challenge.
-traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: ''
+traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: ""
 # The list of DNS resolvers to be used for the ACME DNS challenge.
 traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers: []
 
@@ -367,7 +367,7 @@ traefik_dashboard_enabled: false
 
 # The hostname where the Traefik Dashboard will be exposed on.
 # The Dashboard will be available at https://HOSTNAME/dashboard/ (note the trailing slash).
-traefik_dashboard_hostname: ''
+traefik_dashboard_hostname: ""
 
 # traefik_dashboard_rule controls where the Traefik Dashboard will be exposed.
 # See: traefik_dashboard_enabled, traefik_dashboard_hostname
@@ -382,8 +382,8 @@ traefik_dashboard_tls_certResolver: "{{ traefik_certResolver_primary }}"  # noqa
 # traefik_dashboard_basicauth_enabled controls if the dashboard is protected with HTTP Basic authentication.
 # When the Dashboard is enabled, HTTP Basic authentication is also automatically enabled.
 traefik_dashboard_basicauth_enabled: "{{ traefik_dashboard_enabled }}"
-traefik_dashboard_basicauth_user: ''
-traefik_dashboard_basicauth_password: ''
+traefik_dashboard_basicauth_user: ""
+traefik_dashboard_basicauth_password: ""
 # Temporary file name on the host that runs Ansible
 traefik_dashboard_basicauth_file_tmp: "/tmp/ansible-htpasswd-traefik"
 
@@ -547,4 +547,4 @@ traefik_provider_configuration: "{{ traefik_provider_configuration_yaml | from_y
 #   NETCUP_CUSTOMER_NUMBER=12345
 #   NETCUP_API_KEY=api_key
 #   NETCUP_API_PASSWORD=password
-traefik_environment_variables: ''
+traefik_environment_variables: ""
