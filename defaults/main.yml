@@ -467,7 +467,13 @@ traefik_additional_entrypoints_custom: []
 # The goal is to just obtain the certificate and allow it to be used for other purposes,
 # after extracting it out of Traefik via traefik-certs-dumper (https://github.com/ldez/traefik-certs-dumper).
 # For extracting certificates out using this tool, see this role: https://github.com/mother-of-all-self-hosting/ansible-role-traefik-certs-dumper
-traefik_additional_domains_to_obtain_certificates_for: []
+#
+# Playbooks are meant to inject their defaults into `traefik_additional_domains_to_obtain_certificates_for_auto`.
+# To define your own custom domains, use `traefik_additional_domains_to_obtain_certificates_for_custom`.
+traefik_additional_domains_to_obtain_certificates_for: "{{ (traefik_additional_domains_to_obtain_certificates_for_default + traefik_additional_domains_to_obtain_certificates_for_auto + traefik_additional_domains_to_obtain_certificates_for_custom) | unique }}"
+traefik_additional_domains_to_obtain_certificates_for_default: []
+traefik_additional_domains_to_obtain_certificates_for_auto: []
+traefik_additional_domains_to_obtain_certificates_for_custom: []
 
 # Specifies the entrypoints through which the additional domains will be exposed.
 traefik_additional_domains_to_obtain_certificates_for_entryPoints: "{{ traefik_config_entrypoint_web_secure_name if traefik_config_entrypoint_web_secure_enabled else (traefik_config_entrypoint_web_name if traefik_config_entrypoint_web_enabled else '') }}"  # noqa var-naming
