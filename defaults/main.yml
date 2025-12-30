@@ -17,7 +17,7 @@ traefik_ssl_dir_path: "{{ traefik_base_path }}/ssl"
 traefik_plugins_dir_path: "{{ traefik_base_path }}/plugins-storage"
 
 # renovate: datasource=docker depName=library/traefik versioning=semver
-traefik_version: v3.6.5
+traefik_version: v3.6.6
 
 traefik_uid: ""
 traefik_gid: ""
