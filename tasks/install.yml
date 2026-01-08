@@ -58,9 +58,9 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ traefik_config_dir_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: "0640"
   with_items:
     - env
     - labels
@@ -69,17 +69,17 @@
   ansible.builtin.copy:
     content: "{{ traefik_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ traefik_config_dir_path }}/traefik.yml"
+    mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: "0640"
 
 - name: Ensure provider.yml installed
   ansible.builtin.copy:
     content: "{{ traefik_provider_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ traefik_config_dir_path }}/provider.yml"
+    mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-    mode: "0640"
 
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
 # which means that the acme.json file is also created as root. For such a privilege container, this root-owned file is OK.
