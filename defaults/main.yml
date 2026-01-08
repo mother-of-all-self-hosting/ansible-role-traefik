@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2023 MASH project contributors
 # SPDX-FileCopyrightText: 2023 Niels Bouma
 # SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -543,6 +544,9 @@ traefik_provider_configuration_extension: "{{ traefik_provider_configuration_ext
 # Holds the final Traefik provider configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `traefik_provider_configuration_yaml`.
 traefik_provider_configuration: "{{ traefik_provider_configuration_yaml | from_yaml | combine(traefik_provider_configuration_extension, recursive=True) }}"
+
+# Specify the timezone
+traefik_environment_variables_tz: UTC
 
 # traefik_environment_variables contains a multiline string with environment variables to pass to Traefik.
 #
