@@ -201,19 +201,19 @@ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout: 180s
 # See https://doc.traefik.io/traefik/routing/entrypoints/#encodedcharacters
 traefik_config_entrypoint_web_http_encodedCharacters_enabled: false
 # Controls `http.encodedCharacters.allowEncodedSlash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSlash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSlash: true
 # Controls `http.encodedCharacters.allowEncodedHash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedHash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedHash: true
 # Controls `http.encodedCharacters.allowEncodedBackSlash` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedBackSlash: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedBackSlash: true
 # Controls `http.encodedCharacters.allowEncodedNullCharacter` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedNullCharacter: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedNullCharacter: true
 # Controls `http.encodedCharacters.allowEncodedSemicolon` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSemicolon: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedSemicolon: true
 # Controls `http.encodedCharacters.allowEncodedPercent` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent: true
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web` entrypoint.
-traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark: false
+traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark: true
 
 # Controls whether the web entrypoint should be redirected to web-secure
 # If web-secure is enabled, we enable this redirection by default.
@@ -254,19 +254,19 @@ traefik_config_entrypoint_web_secure_transport_respondingTimeouts_idleTimeout: "
 # See https://doc.traefik.io/traefik/routing/entrypoints/#encodedcharacters
 traefik_config_entrypoint_web_secure_http_encodedCharacters_enabled: false
 # Controls `http.encodedCharacters.allowEncodedSlash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSlash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSlash: true
 # Controls `http.encodedCharacters.allowEncodedHash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedHash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedHash: true
 # Controls `http.encodedCharacters.allowEncodedBackSlash` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedBackSlash: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedBackSlash: true
 # Controls `http.encodedCharacters.allowEncodedNullCharacter` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedNullCharacter: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedNullCharacter: true
 # Controls `http.encodedCharacters.allowEncodedSemicolon` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolon: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolon: true
 # Controls `http.encodedCharacters.allowEncodedPercent` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent: true
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web-secure` entrypoint.
-traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: false
+traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: true
 
 traefik_config_entrypoint_web_secure_http3_enabled: true
 traefik_config_entrypoint_web_secure_http3_config_advertisedPort: "{{ traefik_config_entrypoint_web_secure_port }}"
