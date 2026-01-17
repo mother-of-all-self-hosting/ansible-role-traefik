@@ -30,24 +30,24 @@ traefik_container_image_registry_prefix_upstream: "{{ traefik_container_image_re
 traefik_container_image_registry_prefix_upstream_default: docker.io/
 traefik_container_image_force_pull: "{{ traefik_container_image.endswith(':latest') }}"
 
-# Specifies how the container publishes its web port
+# Specify how the container publishes its web port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:80"), just a port number or an empty string to not expose.
 traefik_container_web_host_bind_port: "{{ traefik_config_entrypoint_web_port if traefik_config_entrypoint_web_enabled else '' }}"
 
-# Specifies how the container publishes its TCP web-secure port
+# Specify how the container publishes its TCP web-secure port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
 traefik_container_web_secure_host_bind_port: "{{ traefik_config_entrypoint_web_secure_port if traefik_config_entrypoint_web_secure_enabled else '' }}"
 
-# Specifies how the container publishes its UDP web-secure port
+# Specify how the container publishes its UDP web-secure port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:443"), just a port number or an empty string to not expose.
 traefik_container_web_secure_host_bind_port_udp: "{{ traefik_config_entrypoint_web_secure_http3_config_advertisedPort if traefik_config_entrypoint_web_secure_enabled and traefik_config_entrypoint_web_secure_http3_enabled else '' }}"
 
-# Specifies how the container publishes its metrics port
+# Specify how the container publishes its metrics port
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8082"), just a port number or an empty string to not expose.
 traefik_container_metrics_host_bind_port: "{{ traefik_config_entrypoint_metrics_port if traefik_config_entrypoint_metrics_enabled else '' }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
