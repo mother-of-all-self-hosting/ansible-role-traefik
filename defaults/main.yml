@@ -288,6 +288,37 @@ traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs: []
 # Also see: `traefik_config_entrypoint_metrics_forwardedHeaders_trustedIPs`
 traefik_config_entrypoint_metrics_forwardedHeaders_insecure: false
 
+# Controls whether the health entrypoint is enabled.
+# When enabled, Traefik's built-in `ping` feature (https://doc.traefik.io/traefik/reference/install-configuration/observability/healthcheck/)
+# is activated on a dedicated internal entrypoint (not exposed to the host).
+# Traefik will respond to /ping requests on this entrypoint with a 200 OK when it's ready.
+# This is used by the systemd ExecStartPost health check (see traefik_systemd_healthcheck_enabled)
+# to verify Traefik is ready before dependent services start.
+traefik_config_entrypoint_health_enabled: true
+traefik_config_entrypoint_health_name: health
+traefik_config_entrypoint_health_port_in_container: 7777
+traefik_config_entrypoint_health_address: ":{{ traefik_config_entrypoint_health_port_in_container }}"
+
+# Controls the post-start health check in the systemd service.
+# When enabled, ExecStartPost polls Traefik's /ping endpoint, keeping the service
+# in "activating (start-post)" state until Traefik is ready.
+# Services with After=traefik.service will properly wait.
+traefik_systemd_healthcheck_enabled: "{{ traefik_config_entrypoint_health_enabled }}"
+traefik_systemd_healthcheck_max_retries: 30
+traefik_systemd_healthcheck_interval_seconds: 1
+
+# The command used for the health check in ExecStartPost.
+# Uses `docker exec` + `wget` (available in Alpine-based Traefik images) to poll /ping.
+traefik_systemd_healthcheck_command: >-
+  {{ devture_systemd_docker_base_host_command_sh }} -c
+  'for i in $(seq 1 {{ traefik_systemd_healthcheck_max_retries }}); do
+  echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: checking readiness via /ping..";
+  {{ devture_systemd_docker_base_host_command_docker }} exec {{ traefik_identifier }}
+  wget -q --spider http://127.0.0.1:{{ traefik_config_entrypoint_health_port_in_container }}/ping && echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: passed" && exit 0;
+  echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: not ready yet, retrying in {{ traefik_systemd_healthcheck_interval_seconds }}s..";
+  sleep {{ traefik_systemd_healthcheck_interval_seconds }};
+  done; echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: failed after {{ traefik_systemd_healthcheck_max_retries }} attempts"; exit 1'
+
 # Controls the `providers.docker.network` configuration option.
 traefik_config_providers_docker_network: "{{ traefik_container_network }}"
 

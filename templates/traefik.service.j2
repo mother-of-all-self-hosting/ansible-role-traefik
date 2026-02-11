@@ -87,6 +87,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network conne
 
 ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ traefik_identifier }}
 
+{% if traefik_systemd_healthcheck_enabled %}
+ExecStartPost={{ traefik_systemd_healthcheck_command }}
+{% endif %}
+
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ traefik_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ traefik_identifier }} 2>/dev/null || true'
 Restart=always

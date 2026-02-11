@@ -23,6 +23,11 @@ accessLog:
 api:
   dashboard: {{ traefik_config_api_dashboard | to_json }}
 
+{% if traefik_config_entrypoint_health_enabled %}
+ping:
+  entryPoint: {{ traefik_config_entrypoint_health_name | to_json }}
+{% endif %}
+
 entryPoints:
 
 {% if traefik_config_entrypoint_web_enabled %}
@@ -119,6 +124,11 @@ entryPoints:
       insecure: true
       {% endif %}
     {% endif %}
+{% endif %}
+
+{% if traefik_config_entrypoint_health_enabled %}
+  {{ traefik_config_entrypoint_health_name }}:
+    address: {{ traefik_config_entrypoint_health_address | to_json }}
 {% endif %}
 
 {% for additional_entrypoint in traefik_additional_entrypoints %}
