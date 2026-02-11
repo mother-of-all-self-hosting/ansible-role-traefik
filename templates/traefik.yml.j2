@@ -170,6 +170,7 @@ metrics:
 {% endif %}
 
 providers:
+  providersThrottleDuration: {{ (traefik_config_providers_providersThrottleDuration_seconds | string) + 's' | to_json }}
   docker:
     exposedByDefault: false
     network: {{ traefik_config_providers_docker_network | to_json }}

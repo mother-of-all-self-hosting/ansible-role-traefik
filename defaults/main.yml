@@ -319,6 +319,11 @@ traefik_systemd_healthcheck_command: >-
   sleep {{ traefik_systemd_healthcheck_interval_seconds }};
   done; echo "[Attempt $i/{{ traefik_systemd_healthcheck_max_retries }}] Traefik systemd health check: failed after {{ traefik_systemd_healthcheck_max_retries }} attempts"; exit 1'
 
+# Controls the `providers.providersThrottleDuration` configuration option (in seconds).
+# This is the duration Traefik waits after a configuration change before applying it, to batch rapid changes.
+# See: https://doc.traefik.io/traefik/v3.3/providers/overview/#providersprovidersthrottleduration
+traefik_config_providers_providersThrottleDuration_seconds: 2
+
 # Controls the `providers.docker.network` configuration option.
 traefik_config_providers_docker_network: "{{ traefik_container_network }}"
 
