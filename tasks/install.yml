@@ -64,6 +64,7 @@
   with_items:
     - env
     - labels
+  register: traefik_support_files_result
 
 - name: Ensure traefik.yml installed
   ansible.builtin.copy:
@@ -72,6 +73,7 @@
     mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
+  register: traefik_config_result
 
 - name: Ensure provider.yml installed
   ansible.builtin.copy:
@@ -80,6 +82,7 @@
     mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
+  register: traefik_provider_result
 
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
 # which means that the acme.json file is also created as root. For such a privilege container, this root-owned file is OK.
@@ -114,20 +117,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}" # noqa args
     force_source: "{{ traefik_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else traefik_container_image_force_pull }}"
-  register: result
+  register: traefik_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: traefik_container_image_pull_result is not failed
 
 - name: Ensure Traefik container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ traefik_container_image }}"
-  register: result
+  register: traefik_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
-  changed_when: "'Downloaded newer image' in result.stdout"
+  until: traefik_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in traefik_container_image_pull_result.stdout"
 
 - name: Run if 'host' network is not specified to be used
   when: traefik_container_network != 'host'
@@ -157,3 +160,15 @@
     src: "{{ role_path }}/templates/traefik.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ traefik_identifier }}.service"
     mode: "0644"
+  register: traefik_systemd_service_result
+
+- name: Determine whether Traefik needs a restart
+  ansible.builtin.set_fact:
+    traefik_restart_necessary: >-
+      {{
+        traefik_support_files_result.changed | default(false)
+        or traefik_config_result.changed | default(false)
+        or traefik_provider_result.changed | default(false)
+        or traefik_systemd_service_result.changed | default(false)
+        or traefik_container_image_pull_result.changed | default(false)
+      }}
