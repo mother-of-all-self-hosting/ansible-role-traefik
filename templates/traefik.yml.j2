@@ -70,9 +70,10 @@ entryPoints:
         allowEncodedQuestionMark: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark | to_json }}
       {% endif %}
 
-      {% if traefik_config_entrypoint_web_bypass_acme_validation_enabled %}
-      allowACMEByPass: true
-      {% endif %}
+    {% endif %}
+
+    {% if traefik_config_entrypoint_web_bypass_acme_validation_enabled %}
+    allowACMEByPass: true
     {% endif %}
 {% endif %}
 
