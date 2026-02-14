@@ -69,6 +69,11 @@ entryPoints:
         allowEncodedPercent: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedPercent | to_json }}
         allowEncodedQuestionMark: {{ traefik_config_entrypoint_web_http_encodedCharacters_allowEncodedQuestionMark | to_json }}
       {% endif %}
+
+    {% endif %}
+
+    {% if traefik_config_entrypoint_web_allowACMEByPass %}
+    allowACMEByPass: true
     {% endif %}
 {% endif %}
 
@@ -102,6 +107,10 @@ entryPoints:
       {% if traefik_config_entrypoint_web_secure_forwardedHeaders_insecure %}
       insecure: true
       {% endif %}
+    {% endif %}
+
+    {% if traefik_config_entrypoint_web_secure_allowACMEByPass %}
+    allowACMEByPass: true
     {% endif %}
 
     transport:
