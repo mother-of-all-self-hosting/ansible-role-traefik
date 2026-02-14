@@ -28,6 +28,7 @@
       community.docker.docker_network:
         name: "{{ traefik_container_network }}"
         state: absent
+      register: traefik_network_deletion_result
 
     - name: Ensure Traefik container network does not exist via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -35,8 +36,8 @@
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} network rm
           {{ traefik_container_network }}
-      register: network_deletion_result
-      changed_when: traefik_container_network in network_deletion_result.stdout
+      register: traefik_network_deletion_result
+      changed_when: traefik_container_network in traefik_network_deletion_result.stdout
 
     - name: Remove Traefik path does not exist
       ansible.builtin.file:
