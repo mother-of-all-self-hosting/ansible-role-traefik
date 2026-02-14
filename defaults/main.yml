@@ -221,6 +221,9 @@ traefik_config_entrypoint_web_to_web_secure_redirection_enabled: "{{ traefik_con
 traefik_config_entrypoint_web_to_web_secure_redirection_to: ":{{ traefik_config_entrypoint_web_secure_port }}"
 traefik_config_entrypoint_web_to_web_secure_redirection_scheme: https
 
+# Controls whether the web entrypoint allows bypassing ACME validation for routes
+traefik_config_entrypoint_web_bypass_acme_validation_enabled: false
+
 # Controls whether the web-secure entrypoint is enabled
 traefik_config_entrypoint_web_secure_enabled: true
 traefik_config_entrypoint_web_secure_name: web-secure
@@ -267,6 +270,9 @@ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedSemicolo
 traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent: true
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web-secure` entrypoint.
 traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: true
+
+# Controls whether the `web-secure` entrypoint allows bypassing ACME validation for routes
+traefik_config_entrypoint_web_secure_bypass_acme_validation_enabled: false
 
 traefik_config_entrypoint_web_secure_http3_enabled: true
 traefik_config_entrypoint_web_secure_http3_config_advertisedPort: "{{ traefik_config_entrypoint_web_secure_port }}"
