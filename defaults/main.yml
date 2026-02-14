@@ -221,8 +221,11 @@ traefik_config_entrypoint_web_to_web_secure_redirection_enabled: "{{ traefik_con
 traefik_config_entrypoint_web_to_web_secure_redirection_to: ":{{ traefik_config_entrypoint_web_secure_port }}"
 traefik_config_entrypoint_web_to_web_secure_redirection_scheme: https
 
-# Controls whether the web entrypoint allows bypassing ACME validation for routes
-traefik_config_entrypoint_web_bypass_acme_validation_enabled: false
+# Controls the `allowACMEByPass` setting for the `web` entrypoint.
+# When enabled, user-defined routers can handle ACME TLS/HTTP challenges
+# instead of Traefik's built-in handler. Useful when services behind Traefik
+# need to resolve their own ACME certificates.
+traefik_config_entrypoint_web_allowACMEByPass: false  # noqa var-naming
 
 # Controls whether the web-secure entrypoint is enabled
 traefik_config_entrypoint_web_secure_enabled: true
@@ -271,8 +274,11 @@ traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedPercent:
 # Controls `http.encodedCharacters.allowEncodedQuestionMark` for the `web-secure` entrypoint.
 traefik_config_entrypoint_web_secure_http_encodedCharacters_allowEncodedQuestionMark: true
 
-# Controls whether the `web-secure` entrypoint allows bypassing ACME validation for routes
-traefik_config_entrypoint_web_secure_bypass_acme_validation_enabled: false
+# Controls the `allowACMEByPass` setting for the `web-secure` entrypoint.
+# When enabled, user-defined routers can handle ACME TLS/HTTP challenges
+# instead of Traefik's built-in handler. Useful when services behind Traefik
+# need to resolve their own ACME certificates.
+traefik_config_entrypoint_web_secure_allowACMEByPass: false  # noqa var-naming
 
 traefik_config_entrypoint_web_secure_http3_enabled: true
 traefik_config_entrypoint_web_secure_http3_config_advertisedPort: "{{ traefik_config_entrypoint_web_secure_port }}"
