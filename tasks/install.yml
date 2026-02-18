@@ -73,7 +73,7 @@
     mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-  register: traefik_config_result
+  register: traefik_config_file_result
 
 - name: Ensure provider.yml installed
   ansible.builtin.copy:
@@ -82,7 +82,7 @@
     mode: "0640"
     owner: "{{ traefik_uid }}"
     group: "{{ traefik_gid }}"
-  register: traefik_provider_result
+  register: traefik_provider_file_result
 
 # If the Docker API is accessed through a UNIX socket (like we do by default), the container is run as root,
 # which means that the acme.json file is also created as root. For such a privilege container, this root-owned file is OK.
@@ -167,8 +167,8 @@
     traefik_restart_necessary: >-
       {{
         traefik_support_files_result.changed | default(false)
-        or traefik_config_result.changed | default(false)
-        or traefik_provider_result.changed | default(false)
+        or traefik_config_file_result.changed | default(false)
+        or traefik_provider_file_result.changed | default(false)
         or traefik_systemd_service_result.changed | default(false)
         or traefik_container_image_pull_result.changed | default(false)
       }}
