@@ -166,7 +166,8 @@ certificatesResolvers:
       dnsChallenge:
         provider: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_provider | to_json }}
         {% if traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck %}
-        delayBeforeCheck: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck | to_json }}
+        propagation:
+          delayBeforeChecks: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck | to_json }}
         {% endif %}
         resolvers: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers | to_json }}
       {% endif %}
