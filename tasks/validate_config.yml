@@ -14,6 +14,7 @@
     - { "old": "traefik_config_letsencrypt_resolver_caServer", "new": "traefik_config_certificatesResolvers_acme_caServer" }
     - { "old": "traefik_config_letsencrypt_use_staging", "new": "traefik_config_certificatesResolvers_acme_use_staging" }
     - { "old": "traefik_config_letsencrypt_httpChallenge_entrypoint", "new": "traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint" }
+    - { "old": "traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck", "new": "traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks" }
     - { "old": "traefik_environment_variables_additional_variables", "new": "traefik_environment_variables" }
 
 - name: Fail if required Traefik settings not defined
