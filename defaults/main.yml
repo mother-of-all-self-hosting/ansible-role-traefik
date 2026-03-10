@@ -192,7 +192,7 @@ traefik_config_certificatesResolvers_acme_dnsChallenge_enabled: false
 # Specify the DNS provider to handle DNS challenges.
 traefik_config_certificatesResolvers_acme_dnsChallenge_provider: ""
 # The delay in seconds before checking DNS propagation for the ACME DNS challenge.
-traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: ""
+traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks: ""
 # The list of DNS resolvers to be used for the ACME DNS challenge.
 traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers: []
 
@@ -200,7 +200,7 @@ traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers: []
 #
 # traefik_config_certificatesResolvers_acme_dnsChallenge_enabled: true
 # traefik_config_certificatesResolvers_acme_dnsChallenge_provider: netcup
-# traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck: 900
+# traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks: 900
 
 # traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers:
 #  - "root-dns.netcup.net"

@@ -165,8 +165,9 @@ certificatesResolvers:
       {% elif traefik_config_certificatesResolvers_acme_dnsChallenge_enabled %}
       dnsChallenge:
         provider: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_provider | to_json }}
-        {% if traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck %}
-        delayBeforeCheck: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_delayBeforeCheck | to_json }}
+        {% if traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks %}
+        propagation:
+          delayBeforeChecks: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_propagation_delayBeforeChecks | to_json }}
         {% endif %}
         resolvers: {{ traefik_config_certificatesResolvers_acme_dnsChallenge_resolvers | to_json }}
       {% endif %}
