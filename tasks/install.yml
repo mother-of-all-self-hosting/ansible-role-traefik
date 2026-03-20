@@ -27,6 +27,9 @@
   when: traefik_dashboard_basicauth_enabled | bool
   block:
     # We do this locally, so that we won't need passlib to be installed on the server.
+    # This path is kept as a convenience option, but passlib may be unavailable
+    # or affected by passlib/bcrypt compatibility issues, and generated hashes
+    # are non-deterministic.
     - name: Generate HTTP Basic authentication file locally
       community.general.htpasswd:
         path: "{{ traefik_dashboard_basicauth_file_tmp }}"
