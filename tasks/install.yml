@@ -120,20 +120,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}" # noqa args
     force_source: "{{ traefik_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else traefik_container_image_force_pull }}"
-  register: traefik_container_image_pull_result
+  register: traefik_container_image_pull_result_ansible_module
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: traefik_container_image_pull_result is not failed
+  until: traefik_container_image_pull_result_ansible_module is not failed
 
 - name: Ensure Traefik container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ traefik_container_image }}"
-  register: traefik_container_image_pull_result
+  register: traefik_container_image_pull_result_command
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: traefik_container_image_pull_result is not failed
-  changed_when: "'Downloaded newer image' in traefik_container_image_pull_result.stdout"
+  until: traefik_container_image_pull_result_command is not failed
+  changed_when: "'Downloaded newer image' in traefik_container_image_pull_result_command.stdout"
 
 - name: Run if 'host' network is not specified to be used
   when: traefik_container_network != 'host'
@@ -173,5 +173,6 @@
         or traefik_config_file_result.changed | default(false)
         or traefik_provider_file_result.changed | default(false)
         or traefik_systemd_service_result.changed | default(false)
-        or traefik_container_image_pull_result.changed | default(false)
+        or traefik_container_image_pull_result_ansible_module.changed | default(false)
+        or traefik_container_image_pull_result_command.changed | default(false)
       }}
