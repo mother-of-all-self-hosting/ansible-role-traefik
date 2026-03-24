@@ -12,7 +12,7 @@
 traefik_enabled: true
 
 traefik_identifier: traefik
-traefik_syslog_identifier: "{{ traefik_identifier }}"
+traefik_systemd_syslog_identifier: "{{ traefik_identifier }}"
 traefik_base_path: "/{{ traefik_identifier }}"
 traefik_config_dir_path: "{{ traefik_base_path }}/config"
 traefik_ssl_dir_path: "{{ traefik_base_path }}/ssl"
