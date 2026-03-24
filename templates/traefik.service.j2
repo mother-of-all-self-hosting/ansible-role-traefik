@@ -94,7 +94,7 @@ ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_syste
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ traefik_identifier }} 2>/dev/null || true'
 Restart=always
 RestartSec=30
-SyslogIdentifier={{ traefik_identifier }}
+SyslogIdentifier={{ traefik_systemd_syslog_identifier }}
 
 [Install]
 WantedBy=multi-user.target

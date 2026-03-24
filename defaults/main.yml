@@ -103,6 +103,10 @@ traefik_systemd_wanted_services_list_default: []
 traefik_systemd_wanted_services_list_auto: []
 traefik_systemd_wanted_services_list_custom: []
 
+# Controls the SyslogIdentifier value in the systemd service file.
+# Certain software (like CrowdSec) may expect a special value (e.g. `traefik`), so we allow overriding.
+traefik_systemd_syslog_identifier: "{{ traefik_identifier }}"
+
 # Controls how long to wait for the container to stop gracefully before killing it.
 traefik_container_stop_grace_time_seconds: "{{ devture_systemd_docker_base_container_stop_grace_time_seconds }}"
 
