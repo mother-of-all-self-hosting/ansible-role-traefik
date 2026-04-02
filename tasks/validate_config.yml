@@ -53,8 +53,13 @@
 - name: Fail if required Traefik Dashboard HTTP Basic authentication settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using HTTP Basic authentication.
-  when: "traefik_dashboard_basicauth_enabled | bool and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - traefik_dashboard_basicauth_user
-    - traefik_dashboard_basicauth_password
+      For Traefik Dashboard HTTP Basic authentication, define either
+      `traefik_dashboard_basicauth_htpasswd` or both
+      `traefik_dashboard_basicauth_user` and `traefik_dashboard_basicauth_password`.
+  when: >-
+    traefik_dashboard_basicauth_enabled | bool
+    and traefik_dashboard_basicauth_htpasswd | string | length == 0
+    and (
+      traefik_dashboard_basicauth_user | string | length == 0
+      or traefik_dashboard_basicauth_password | string | length == 0
+    )

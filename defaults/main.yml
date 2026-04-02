@@ -396,7 +396,7 @@ traefik_config_http_middlewares_default: |
         {
           'traefik-dashboard-auth': {
             'basicauth': {
-              'users': traefik_dashboard_basicauth_file_contents,
+              'users': traefik_dashboard_basicauth_htpasswd,
             }
           }
         } if traefik_dashboard_basicauth_enabled else {}
@@ -469,12 +469,22 @@ traefik_dashboard_tls_certResolver: "{{ traefik_certResolver_primary }}"  # noqa
 # traefik_dashboard_basicauth_enabled controls if the dashboard is protected with HTTP Basic authentication.
 # When the Dashboard is enabled, HTTP Basic authentication is also automatically enabled.
 traefik_dashboard_basicauth_enabled: "{{ traefik_dashboard_enabled }}"
+
+# Pre-generated htpasswd content for Traefik Dashboard HTTP Basic authentication.
+# This is the preferred way to configure HTTP Basic authentication, because it
+# avoids the `passlib` dependency and keeps the resulting configuration stable
+# across playbook runs.
+#
+# Also see `traefik_dashboard_basicauth_user` and `traefik_dashboard_basicauth_password`
+# for a legacy convenience method. Ansible will convert those values and store
+# the resulting htpasswd entry in this variable at runtime.
+traefik_dashboard_basicauth_htpasswd: ""
+
 # This convenience method is discouraged. It requires the `passlib` Python
 # library on the Ansible controller, may be affected by passlib/bcrypt
 # compatibility issues (https://foss.heptapod.net/python-libs/passlib/-/issues/196),
 # and generates non-deterministic hashes which can lead to unnecessary changes.
-# Prefer configuring pre-generated Basic Auth users via
-# `traefik_provider_configuration_extension_yaml` instead.
+# Prefer defining `traefik_dashboard_basicauth_htpasswd` instead.
 traefik_dashboard_basicauth_user: ""
 traefik_dashboard_basicauth_password: ""
 # Temporary file name on the host that runs Ansible

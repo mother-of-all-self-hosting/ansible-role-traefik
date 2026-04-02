@@ -23,11 +23,14 @@
     - path: "{{ traefik_plugins_dir_path }}"
       when: "{{ traefik_plugin_support_enabled }}"
 
-- name: Run if HTTP Basic authentication is enabled
-  when: traefik_dashboard_basicauth_enabled | bool
+- name: Generate Traefik Dashboard HTTP Basic authentication content locally
+  when:
+    - traefik_dashboard_basicauth_enabled | bool
+    - traefik_dashboard_basicauth_htpasswd | string | length == 0
   block:
     # We do this locally, so that we won't need passlib to be installed on the server.
-    # This path is kept as a convenience option, but passlib may be unavailable
+    # This path is kept as a legacy convenience option. Prefer pre-generated
+    # `traefik_dashboard_basicauth_htpasswd`, because passlib may be unavailable
     # or affected by passlib/bcrypt compatibility issues, and generated hashes
     # are non-deterministic.
     - name: Generate HTTP Basic authentication file locally
@@ -44,11 +47,11 @@
         src: "{{ traefik_dashboard_basicauth_file_tmp }}"
       become: false
       delegate_to: 127.0.0.1
-      register: traefik_dashboard_basicauth_file_contents_raw
+      register: traefik_dashboard_basicauth_htpasswd_raw
 
     - name: Load HTTP Basic authentication file contents
       ansible.builtin.set_fact:
-        traefik_dashboard_basicauth_file_contents: "{{ traefik_dashboard_basicauth_file_contents_raw['content'] | b64decode | trim }}"
+        traefik_dashboard_basicauth_htpasswd: "{{ traefik_dashboard_basicauth_htpasswd_raw['content'] | b64decode | trim }}"
 
     - name: Ensure local temporary HTTP Basic authentication file is removed
       ansible.builtin.file:

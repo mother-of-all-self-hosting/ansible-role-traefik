@@ -5,10 +5,6 @@
 
 ---
 
-# traefik_dashboard_basicauth_file_contents contains the htpasswd file contents.
-# This is populated at runtime.
-traefik_dashboard_basicauth_file_contents: ''
-
 # Controls whether the forwardedHeaders section appears in the configuration for the web entrypoint
 traefik_config_entrypoint_web_forwardedHeaders_enabled: "{{ traefik_config_entrypoint_web_forwardedHeaders_trustedIPs | length > 0 or traefik_config_entrypoint_web_forwardedHeaders_insecure }}"
 
