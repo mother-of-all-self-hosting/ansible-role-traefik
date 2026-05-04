@@ -28,7 +28,6 @@ traefik_container_image_tag: "{{ traefik_version }}"
 traefik_container_image_registry_prefix: "{{ traefik_container_image_registry_prefix_upstream }}"
 traefik_container_image_registry_prefix_upstream: "{{ traefik_container_image_registry_prefix_upstream_default }}"
 traefik_container_image_registry_prefix_upstream_default: docker.io/
-traefik_container_image_force_pull: "{{ traefik_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 traefik_container_network: traefik
