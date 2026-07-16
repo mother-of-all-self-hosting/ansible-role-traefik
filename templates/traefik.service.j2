@@ -39,6 +39,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% endif %}
       --read-only \
       --network={{ traefik_container_network }} \
+      {% for dns_search_domain in traefik_container_dns_search_domains %}
+      --dns-search={{ dns_search_domain }} \
+      {% endfor %}
       {% if traefik_container_web_host_bind_port %}
       -p {{ traefik_container_web_host_bind_port }}:{{ traefik_config_entrypoint_web_port_in_container }} \
       {% endif %}
