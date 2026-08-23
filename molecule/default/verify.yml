@@ -1,0 +1,115 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Traefik systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
+    # got an answer from Traefik's /ping endpoint, so 'active' already implies
+    # that Traefik is up and its static configuration parsed.
+    - name: Wait for Traefik service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: traefik.service
+      register: traefik_service
+      until: traefik_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Traefik service is active
+      ansible.builtin.assert:
+        that: traefik_service.status.ActiveState == 'active'
+        fail_msg: "traefik.service not active ({{ traefik_service.status.ActiveState }})"
+        success_msg: "traefik.service is active"
+
+    - name: Retrieve Traefik service log for debugging
+      when: traefik_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu traefik.service
+      changed_when: false
+
+    - name: Ensure the web entrypoint answers (404 for an unknown host)
+      ansible.builtin.uri:
+        url: "http://localhost:80/"
+        method: GET
+        headers:
+          Host: unknown.example.com
+        status_code: [404]
+      register: traefik_web_entrypoint
+      until: traefik_web_entrypoint.status == 404
+      retries: 12
+      delay: 5
+
+    - name: Ensure the dashboard requires authentication
+      ansible.builtin.uri:
+        url: "http://localhost:80/dashboard/"
+        method: GET
+        headers:
+          Host: localhost
+        status_code: [401]
+
+    - name: Query the Traefik API overview
+      ansible.builtin.uri:
+        url: "http://localhost:80/api/overview"
+        method: GET
+        headers:
+          Host: localhost
+        url_username: admin
+        url_password: molecule-test
+        force_basic_auth: true
+        return_content: true
+      register: traefik_api_overview
+
+    - name: Assert the Docker and file providers are enabled
+      ansible.builtin.assert:
+        that:
+          - "'Docker' in traefik_api_overview.json.providers"
+          - "'File' in traefik_api_overview.json.providers"
+        fail_msg: "Unexpected providers: {{ traefik_api_overview.json.providers | default([]) }}"
+        success_msg: "Docker and file providers are enabled"
+
+    # Routing an actual container through Traefik exercises the Docker
+    # provider end-to-end: label discovery on the Docker socket, router and
+    # service creation, and proxying.
+    - name: Start a whoami container attached to the Traefik network
+      community.docker.docker_container:
+        name: traefik-molecule-whoami
+        image: docker.io/traefik/whoami:latest
+        networks:
+          - name: traefik
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.molecule-whoami.rule: "Host(`whoami.local`)"
+          traefik.http.routers.molecule-whoami.entrypoints: web
+        state: started
+
+    - name: Wait for the whoami container to be routed through Traefik
+      ansible.builtin.uri:
+        url: "http://localhost:80/"
+        method: GET
+        headers:
+          Host: whoami.local
+        return_content: true
+      register: traefik_whoami_response
+      until: traefik_whoami_response.status == 200
+      retries: 12
+      delay: 5
+
+    - name: Assert the whoami container was served through Traefik
+      ansible.builtin.assert:
+        that:
+          - traefik_whoami_response.status == 200
+          - "'Hostname:' in traefik_whoami_response.content"
+        fail_msg: "whoami was not served through Traefik ({{ traefik_whoami_response.status | default('no response') }})"
+        success_msg: "whoami was served through Traefik"
+
+    - name: Show Traefik verification summary
+      ansible.builtin.debug:
+        msg:
+          - "Traefik systemd: {{ traefik_service.status.ActiveState }}"
+          - "Web entrypoint: {{ traefik_web_entrypoint.status }}"
+          - "API providers: {{ traefik_api_overview.json.providers }}"
+          - "Docker provider routing (whoami): {{ traefik_whoami_response.status }}"

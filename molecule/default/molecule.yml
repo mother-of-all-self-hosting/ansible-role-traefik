@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    force: true
+driver:
+  name: docker
+platforms:
+  - name: traefik-${MOLECULE_DISTRO:-ubuntu2604}-default
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2604}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_result_format: yaml
+  inventory:
+    group_vars:
+      all:
+        # Helper variables
+        traefik_debug_service_enabled: false
+
+        # Variables for Traefik
+        traefik_uid: 1000
+        traefik_gid: 1000
+
+        # Disable the web-secure entrypoint: it would enable the ACME
+        # certificate resolver (pointing at the real Let's Encrypt), which is
+        # useless noise in an isolated test environment.
+        traefik_config_entrypoint_web_secure_enabled: false
+
+        # Enable the dashboard/API so that verify.yml can query the API about
+        # the state of routers and providers.
+        traefik_dashboard_enabled: true
+        traefik_dashboard_hostname: localhost
+        traefik_dashboard_entrypoints: web
+        traefik_dashboard_basicauth_enabled: true
+        # A pre-generated htpasswd entry (admin / molecule-test), so that the
+        # test does not need passlib on the controller. Molecule interpolates
+        # `$VAR` environment references in this file, hence the `$$` escaping.
+        traefik_dashboard_basicauth_htpasswd: "admin:$$apr1$$m0l3cul3$$RiLTrahBQ8HDU0IGJitAZ0"
+  env:
+    # Workaround for https://github.com/ansible/molecule/issues/4391
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+verifier:
+  name: ansible
