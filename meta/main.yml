@@ -2,6 +2,8 @@
 galaxy_info:
   author: Slavi Pantaleev
   company: Devture Ltd
+  role_name: traefik
+  namespace: mash
   description: Traefik role
   platforms:
     - name: Debian
