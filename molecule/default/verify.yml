@@ -74,17 +74,20 @@
     # Routing an actual container through Traefik exercises the Docker
     # provider end-to-end: label discovery on the Docker socket, router and
     # service creation, and proxying.
+    # Started via the docker CLI rather than community.docker.docker_container,
+    # because the ansible-lint environment used by pre-commit does not have the
+    # community.docker collection and would fail the syntax check.
     - name: Start a whoami container attached to the Traefik network
-      community.docker.docker_container:
-        name: traefik-molecule-whoami
-        image: docker.io/traefik/whoami:latest
-        networks:
-          - name: traefik
-        labels:
-          traefik.enable: "true"
-          traefik.http.routers.molecule-whoami.rule: "Host(`whoami.local`)"
-          traefik.http.routers.molecule-whoami.entrypoints: web
-        state: started
+      ansible.builtin.command:
+        cmd: >-
+          docker run --detach --rm
+          --name=traefik-molecule-whoami
+          --network=traefik
+          --label=traefik.enable=true
+          --label=traefik.http.routers.molecule-whoami.rule=Host(`whoami.local`)
+          --label=traefik.http.routers.molecule-whoami.entrypoints=web
+          docker.io/traefik/whoami:latest
+      changed_when: true
 
     - name: Wait for the whoami container to be routed through Traefik
       ansible.builtin.uri:
