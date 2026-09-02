@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache@v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ansible-collections-${{ hashFiles('traefik/molecule/default/requirements.yml') }}
+          key: ansible-collections-${{ hashFiles('traefik/molecule/*/requirements.yml') }}
 
       - name: Run Molecule
         working-directory: traefik
