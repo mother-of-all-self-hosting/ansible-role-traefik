@@ -111,10 +111,10 @@
         fail_msg: "whoami was not served through Traefik ({{ traefik_whoami_response.status | default('no response') }})"
         success_msg: "whoami was served through Traefik"
 
-    - name: Show Traefik verification summary
+    - name: Show the Traefik verification summary
       ansible.builtin.debug:
         msg:
           - "Traefik systemd: {{ traefik_service.status.ActiveState }}"
-          - "Web entrypoint: {{ traefik_web_entrypoint.status }}"
-          - "API providers: {{ traefik_api_overview.json.providers }}"
-          - "Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
+          - "Traefik Web entrypoint: {{ traefik_web_entrypoint.status }}"
+          - "Traefik API providers: {{ traefik_api_overview.json.providers }}"
+          - "Traefik Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
