@@ -13,7 +13,7 @@
   when: traefik_service_stat.stat.exists | bool
   block:
     - name: Ensure Traefik systemd service is stopped
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ traefik_identifier }}"
         state: stopped
         daemon_reload: true
