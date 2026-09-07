@@ -13,21 +13,27 @@
     # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
     # got an answer from Traefik's /ping endpoint, so 'active' already implies
     # that Traefik is up and its static configuration parsed.
-    - name: Wait for Traefik service to become active (up to 180s)
-      ansible.builtin.systemd:
+    - name: Wait for the Traefik systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: traefik.service
       register: traefik_service
       until: traefik_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
-    - name: Assert Traefik service is active
+    # `Restart=always` in the systemd unit means that even a container which crashes
+    # and gets restarted reads as active here, so this is a precondition rather than
+    # a result.
+    - name: Assert the Traefik systemd service is active
       ansible.builtin.assert:
         that: traefik_service.status.ActiveState == 'active'
-        fail_msg: "traefik.service not active ({{ traefik_service.status.ActiveState }})"
+        fail_msg: "traefik.service is not active ({{ traefik_service.status.ActiveState }})"
         success_msg: "traefik.service is active"
 
-    - name: Retrieve Traefik service log for debugging
+    - name: Retrieve the Traefik systemd service log for debugging
       when: traefik_debug_service_enabled | bool
       ansible.builtin.command:
         cmd: journalctl -xeu traefik.service
