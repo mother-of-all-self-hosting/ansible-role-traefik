@@ -88,7 +88,7 @@
     - name: Start a whoami container attached to the Traefik network
       ansible.builtin.command:
         cmd: >-
-          docker run --detach --rm
+          docker run -d --rm
           --name=traefik-molecule-whoami
           --network=traefik
           --label=traefik.enable=true
