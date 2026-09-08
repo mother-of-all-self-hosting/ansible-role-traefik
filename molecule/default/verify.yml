@@ -36,7 +36,7 @@
     - name: Retrieve the Traefik systemd service log for debugging
       when: traefik_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu traefik.service
+        cmd: journalctl --no-pager --output=cat --unit=traefik.service
       changed_when: false
 
     - name: Ensure the web entrypoint answers (404 for an unknown host)
