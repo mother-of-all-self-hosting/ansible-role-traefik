@@ -10,6 +10,8 @@
   become: true
   gather_facts: false
   tasks:
+    - name: Verify that Traefik works
+      block:
     # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
     # got an answer from Traefik's /ping endpoint, so 'active' already implies
     # that Traefik is up and its static configuration parsed.
@@ -124,3 +126,19 @@
           - "Traefik Web entrypoint: {{ traefik_web_entrypoint.status }}"
           - "Traefik API providers: {{ traefik_api_overview.json.providers }}"
           - "Traefik Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the Traefik systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=traefik.service
+          register: traefik_service_log
+          changed_when: false
+
+        - name: Show the Traefik systemd service log
+          ansible.builtin.debug:
+            var: traefik_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "Traefik verification failed. The systemd service log is printed above."
