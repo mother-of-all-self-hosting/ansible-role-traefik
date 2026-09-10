@@ -12,120 +12,120 @@
   tasks:
     - name: Verify that Traefik works
       block:
-    # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
-    # got an answer from Traefik's /ping endpoint, so 'active' already implies
-    # that Traefik is up and its static configuration parsed.
-    - name: Wait for the Traefik systemd service to become active (up to 180s)
-      ansible.builtin.systemd_service:
-        name: traefik.service
-      register: traefik_service
-      until: traefik_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
-      # So that giving up is reported by the assertion below rather than as a
-      # wall of systemd unit properties.
-      failed_when: false
+        # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
+        # got an answer from Traefik's /ping endpoint, so 'active' already implies
+        # that Traefik is up and its static configuration parsed.
+        - name: Wait for the Traefik systemd service to become active (up to 180s)
+          ansible.builtin.systemd_service:
+            name: traefik.service
+          register: traefik_service
+          until: traefik_service.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    # `Restart=always` in the systemd unit means that even a container which crashes
-    # and gets restarted reads as active here, so this is a precondition rather than
-    # a result.
-    - name: Assert the Traefik systemd service is active
-      ansible.builtin.assert:
-        that: traefik_service.status.ActiveState == 'active'
-        fail_msg: "traefik.service is not active ({{ traefik_service.status.ActiveState }})"
-        success_msg: "traefik.service is active"
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the Traefik systemd service is active
+          ansible.builtin.assert:
+            that: traefik_service.status.ActiveState == 'active'
+            fail_msg: "traefik.service is not active ({{ traefik_service.status.ActiveState }})"
+            success_msg: "traefik.service is active"
 
-    - name: Retrieve the Traefik systemd service log for debugging
-      when: traefik_debug_service_enabled | bool
-      ansible.builtin.command:
-        cmd: journalctl --no-pager --output=cat --unit=traefik.service
-      changed_when: false
+        - name: Retrieve the Traefik systemd service log for debugging
+          when: traefik_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=traefik.service
+          changed_when: false
 
-    - name: Ensure the web entrypoint answers (404 for an unknown host)
-      ansible.builtin.uri:
-        url: "http://localhost:80/"
-        method: GET
-        headers:
-          Host: unknown.example.com
-        status_code: [404]
-      register: traefik_web_entrypoint
-      until: traefik_web_entrypoint.status == 404
-      retries: 12
-      delay: 5
+        - name: Ensure the web entrypoint answers (404 for an unknown host)
+          ansible.builtin.uri:
+            url: "http://localhost:80/"
+            method: GET
+            headers:
+              Host: unknown.example.com
+            status_code: [404]
+          register: traefik_web_entrypoint
+          until: traefik_web_entrypoint.status == 404
+          retries: 12
+          delay: 5
 
-    - name: Ensure the dashboard requires authentication
-      ansible.builtin.uri:
-        url: "http://localhost:80/dashboard/"
-        method: GET
-        headers:
-          Host: localhost
-        status_code: [401]
+        - name: Ensure the dashboard requires authentication
+          ansible.builtin.uri:
+            url: "http://localhost:80/dashboard/"
+            method: GET
+            headers:
+              Host: localhost
+            status_code: [401]
 
-    - name: Query the Traefik API overview
-      ansible.builtin.uri:
-        url: "http://localhost:80/api/overview"
-        method: GET
-        headers:
-          Host: localhost
-        url_username: admin
-        url_password: molecule-test
-        force_basic_auth: true
-        return_content: true
-      register: traefik_api_overview
+        - name: Query the Traefik API overview
+          ansible.builtin.uri:
+            url: "http://localhost:80/api/overview"
+            method: GET
+            headers:
+              Host: localhost
+            url_username: admin
+            url_password: molecule-test
+            force_basic_auth: true
+            return_content: true
+          register: traefik_api_overview
 
-    - name: Assert the Docker and file providers are enabled
-      ansible.builtin.assert:
-        that:
-          - "'Docker' in traefik_api_overview.json.providers"
-          - "'File' in traefik_api_overview.json.providers"
-        fail_msg: "Unexpected providers: {{ traefik_api_overview.json.providers | default([]) }}"
-        success_msg: "Docker and file providers are enabled"
+        - name: Assert the Docker and file providers are enabled
+          ansible.builtin.assert:
+            that:
+              - "'Docker' in traefik_api_overview.json.providers"
+              - "'File' in traefik_api_overview.json.providers"
+            fail_msg: "Unexpected providers: {{ traefik_api_overview.json.providers | default([]) }}"
+            success_msg: "Docker and file providers are enabled"
 
-    # Routing an actual container through Traefik exercises the Docker
-    # provider end-to-end: label discovery on the Docker socket, router and
-    # service creation, and proxying.
-    # Started via the docker CLI rather than community.docker.docker_container,
-    # because the ansible-lint environment used by pre-commit does not have the
-    # community.docker collection and would fail the syntax check.
-    - name: Start a whoami container attached to the Traefik network
-      ansible.builtin.command:
-        cmd: >-
-          docker run -d --rm
-          --name=traefik-molecule-whoami
-          --network=traefik
-          --label=traefik.enable=true
-          --label=traefik.http.routers.molecule-whoami.rule=Host(`whoami.local`)
-          --label=traefik.http.routers.molecule-whoami.entrypoints=web
-          docker.io/traefik/whoami:latest
-      changed_when: true
+        # Routing an actual container through Traefik exercises the Docker
+        # provider end-to-end: label discovery on the Docker socket, router and
+        # service creation, and proxying.
+        # Started via the docker CLI rather than community.docker.docker_container,
+        # because the ansible-lint environment used by pre-commit does not have the
+        # community.docker collection and would fail the syntax check.
+        - name: Start a whoami container attached to the Traefik network
+          ansible.builtin.command:
+            cmd: >-
+              docker run -d --rm
+              --name=traefik-molecule-whoami
+              --network=traefik
+              --label=traefik.enable=true
+              --label=traefik.http.routers.molecule-whoami.rule=Host(`whoami.local`)
+              --label=traefik.http.routers.molecule-whoami.entrypoints=web
+              docker.io/traefik/whoami:latest
+          changed_when: true
 
-    - name: Wait for the whoami container to be routed through Traefik
-      ansible.builtin.uri:
-        url: "http://localhost:80/"
-        method: GET
-        headers:
-          Host: whoami.local
-        return_content: true
-      register: traefik_whoami_response
-      until: traefik_whoami_response.status == 200
-      retries: 12
-      delay: 5
+        - name: Wait for the whoami container to be routed through Traefik
+          ansible.builtin.uri:
+            url: "http://localhost:80/"
+            method: GET
+            headers:
+              Host: whoami.local
+            return_content: true
+          register: traefik_whoami_response
+          until: traefik_whoami_response.status == 200
+          retries: 12
+          delay: 5
 
-    - name: Assert the whoami container was served through Traefik
-      ansible.builtin.assert:
-        that:
-          - traefik_whoami_response.status == 200
-          - "'Hostname:' in traefik_whoami_response.content"
-        fail_msg: "whoami was not served through Traefik ({{ traefik_whoami_response.status | default('no response') }})"
-        success_msg: "whoami was served through Traefik"
+        - name: Assert the whoami container was served through Traefik
+          ansible.builtin.assert:
+            that:
+              - traefik_whoami_response.status == 200
+              - "'Hostname:' in traefik_whoami_response.content"
+            fail_msg: "whoami was not served through Traefik ({{ traefik_whoami_response.status | default('no response') }})"
+            success_msg: "whoami was served through Traefik"
 
-    - name: Show the Traefik verification summary
-      ansible.builtin.debug:
-        msg:
-          - "Traefik systemd: {{ traefik_service.status.ActiveState }}"
-          - "Traefik Web entrypoint: {{ traefik_web_entrypoint.status }}"
-          - "Traefik API providers: {{ traefik_api_overview.json.providers }}"
-          - "Traefik Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
+        - name: Show the Traefik verification summary
+          ansible.builtin.debug:
+            msg:
+              - "Traefik systemd: {{ traefik_service.status.ActiveState }}"
+              - "Traefik Web entrypoint: {{ traefik_web_entrypoint.status }}"
+              - "Traefik API providers: {{ traefik_api_overview.json.providers }}"
+              - "Traefik Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.
