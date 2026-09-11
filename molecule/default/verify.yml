@@ -9,19 +9,25 @@
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    traefik_verify_units:
+      - traefik.service
+
   tasks:
     - name: Verify that Traefik works
       block:
         # The systemd unit only reaches 'active' after its ExecStartPost healthcheck
         # got an answer from Traefik's /ping endpoint, so 'active' already implies
         # that Traefik is up and its static configuration parsed.
-        - name: Wait for the Traefik systemd service to become active (up to 180s)
+        - name: Wait for the Traefik systemd services to become active (up to 180s each)
           ansible.builtin.systemd_service:
-            name: traefik.service
-          register: traefik_service
-          until: traefik_service.status.ActiveState == 'active'
+            name: "{{ item }}"
+          register: traefik_services
+          until: traefik_services.status.ActiveState == 'active'
           retries: 36
           delay: 5
+          loop: "{{ traefik_verify_units }}"
           # So that giving up is reported by the assertion below rather than as a
           # wall of systemd unit properties.
           failed_when: false
@@ -29,17 +35,20 @@
         # `Restart=always` in the systemd unit means that even a container which crashes
         # and gets restarted reads as active here, so this is a precondition rather than
         # a result.
-        - name: Assert the Traefik systemd service is active
+        - name: Assert the Traefik systemd services are active
           ansible.builtin.assert:
-            that: traefik_service.status.ActiveState == 'active'
-            fail_msg: "traefik.service is not active ({{ traefik_service.status.ActiveState }})"
-            success_msg: "traefik.service is active"
+            that: traefik_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(traefik_verify_units | zip(traefik_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
 
-        - name: Retrieve the Traefik systemd service log for debugging
+        - name: Retrieve the Traefik systemd services log for debugging
           when: traefik_debug_service_enabled | bool
           ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=traefik.service
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
           changed_when: false
+          loop: "{{ traefik_verify_units }}"
 
         - name: Ensure the web entrypoint answers (404 for an unknown host)
           ansible.builtin.uri:
@@ -122,7 +131,7 @@
         - name: Show the Traefik verification summary
           ansible.builtin.debug:
             msg:
-              - "Traefik systemd: {{ traefik_service.status.ActiveState }}"
+              - "Traefik systemd: {% for unit, state in traefik_verify_units | zip(traefik_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "Traefik Web entrypoint: {{ traefik_web_entrypoint.status }}"
               - "Traefik API providers: {{ traefik_api_overview.json.providers }}"
               - "Traefik Docker provider routing (whoami): {{ traefik_whoami_response.status }}"
