@@ -31,6 +31,7 @@ provisioner:
       all:
         # Helper variables
         traefik_debug_service_enabled: false
+        traefik_restarts_check_enabled: true
 
         # Variables for Traefik
         traefik_uid: 1000
