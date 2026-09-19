@@ -81,7 +81,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {{ traefik_container_extra_arguments | join(" ") }} \
       {% endif %}
       {{ traefik_container_image }} \
-      --configFile=/config/traefik.yml {{ traefik_process_extra_arguments | join(' ') }}
+      {{ traefik_process_extra_arguments | join(' ') }}
 
 {% for network in traefik_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ traefik_identifier }}

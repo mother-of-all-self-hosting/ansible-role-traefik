@@ -101,10 +101,11 @@ traefik_container_extra_arguments: "{{ traefik_container_extra_arguments_auto + 
 traefik_container_extra_arguments_auto: []
 traefik_container_extra_arguments_custom: []
 
-# A list of extra arguments to pass to the Traefik process
-# Example: ['--api']
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
 traefik_process_extra_arguments: "{{ traefik_process_extra_arguments_auto + traefik_process_extra_arguments_custom }}"
-traefik_process_extra_arguments_auto: []
+traefik_process_extra_arguments_auto:
+  - --configFile=/config/traefik.yml
 traefik_process_extra_arguments_custom: []
 
 # List of systemd services that the Traefik systemd service depends on
