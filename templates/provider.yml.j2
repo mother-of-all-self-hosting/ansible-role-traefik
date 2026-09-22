@@ -31,3 +31,8 @@ http:
 
 tcp:
   serversTransports: {{ traefik_config_tcp_servertransports | to_json }}
+
+{% if traefik_config_tls_options | length > 0 %}
+tls:
+  options: {{ traefik_config_tls_options | to_json }}
+{% endif %}
