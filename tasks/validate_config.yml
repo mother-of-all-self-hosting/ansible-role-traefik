@@ -28,13 +28,21 @@
     - traefik_gid
     - traefik_entrypoint_primary
 
-- name: Fail if required Traefik ACME settings not defined
+- name: Fail if required Traefik ACME HTTP challenge settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when enabling ACME SSL certificate resolvers.
-  when: "traefik_config_certificatesResolvers_acme_enabled | bool and lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`) when enabling ACME SSL certificate resolvers with the HTTP challenge.
+  when: "traefik_config_certificatesResolvers_acme_enabled | bool and traefik_config_certificatesResolvers_acme_httpChallenge_enabled | bool and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - traefik_config_certificatesResolvers_acme_httpChallenge_entrypoint
+
+- name: Fail if required Traefik ACME DNS challenge settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when enabling ACME SSL certificate resolvers with the DNS challenge.
+  when: "traefik_config_certificatesResolvers_acme_enabled | bool and traefik_config_certificatesResolvers_acme_dnsChallenge_enabled | bool and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - traefik_config_certificatesResolvers_acme_dnsChallenge_provider
 
 - name: Fail if Traefik docker endpoint syntax invalid
   ansible.builtin.fail:
